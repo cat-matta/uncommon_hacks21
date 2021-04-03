@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>NightRuns</title>
+		<script src="//cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
+	    <!-- <script src="startup.js"></script> -->
+	    <!-- <script src="scene-one.js"></script> -->
+	    <!-- <script src="scene-two.js"></script> -->
+	</head>
+	<body>
+		<div id="game"></div>
+		<script type = "text/javascript">
+			class SceneA extends Phaser.Scene {
+
+    constructor ()
+    {
+        super({ key: 'sceneA' });
+    }
+
+    preload ()
+    {
+        this.load.image('start', 'assets/start.png');
+    }
+
+    create ()
+    {
+        this.start = this.add.image(550, 400, 'start');
+
+        this.input.manager.enabled = true;
+
+        this.input.once('pointerdown', function () {
+
+            this.scene.start('sceneB');
+
+        }, this);
+    }
+
+}
+
+class SceneB extends Phaser.Scene {
+
+    constructor ()
+    {
+        super({ key: 'sceneB' });
+    }
+
+    preload ()
+    {
+        this.load.image('Scene1', 'assets/Scene1.png');
+    }
+
+    create ()
+    {
+        this.scenea = this.add.image(550, 375, 'Scene1');
+
+        this.input.once('pointerdown', function (event) {
+
+            this.scene.start('sceneC');
+
+        }, this);
+    }
+
+    // update ()
+    // {
+    //     this.arrow.rotation += 0.01;
+    // }
+
+}
+
+class SceneC extends Phaser.Scene {
+
+    constructor ()
+    {
+        super({ key: 'sceneC' });
+    }
+
+    preload ()
+    {
+        this.load.image('Scene2', 'assets/Scene2.png');
+    }
+
+    create ()
+    {
+        this.scenec = this.add.image(550, 400, 'Scene2');
+        this.input.once('pointerdown', function (event) {
+
+            this.scene.start('Start');
+
+        }, this);
+    }
+
+}
+
+var config = {
+    type: Phaser.AUTO,
+    width: 1080,
+    height: 720,
+    backgroundColor: '#000000',
+    parent: 'phaser-example',
+    scene: [ SceneA, SceneB, SceneC ]
+};
+
+var game = new Phaser.Game(config);
+
+		</script>
+	</body>
+</html>
