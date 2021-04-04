@@ -1,107 +1,277 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>NightRuns</title>
-		<script src="//cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
-	    <!-- <script src="startup.js"></script> -->
-	    <!-- <script src="scene-one.js"></script> -->
-	    <!-- <script src="scene-two.js"></script> -->
-	</head>
-	<body>
-		<div id="game"></div>
-		<script type = "text/javascript">
-			class SceneA extends Phaser.Scene {
+  <head>
+    <title>NightRuns</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
+    <!-- <script src="startup.js"></script> -->
+    <!-- <script src="scene-one.js"></script> -->
+    <!-- <script src="scene-two.js"></script> -->
+  </head>
 
-    constructor ()
-    {
-        super({ key: 'sceneA' });
-    }
+  <body>
+    <div id="game"></div>
+    <script type="text/javascript">
+      class SceneA extends Phaser.Scene {
+        constructor() {
+          super({ key: "sceneA" });
+        }
 
-    preload ()
-    {
-        this.load.image('start', 'assets/start.png');
-    }
+        preload() {
+          this.load.image("start", "assets/start.png");
+        }
 
-    create ()
-    {
-        this.start = this.add.image(550, 400, 'start');
+        create() {
+          this.start = this.add.image(550, 400, "start");
 
-        this.input.manager.enabled = true;
+          this.input.manager.enabled = true;
 
-        this.input.once('pointerdown', function () {
+          this.input.once(
+            "pointerdown",
+            function () {
+              this.scene.start("sceneB");
+            },
+            this
+          );
+        }
+      }
 
-            this.scene.start('sceneB');
+      class SceneB extends Phaser.Scene {
+        constructor() {
+          super({ key: "sceneB" });
+        }
 
-        }, this);
-    }
+        preload() {
+          this.load.image("Scene1", "assets/Scene1.png");
+        }
 
-}
+        create() {
+          this.scenea = this.add.image(540, 370, "Scene1");
 
-class SceneB extends Phaser.Scene {
+          this.input.once(
+            "pointerdown",
+            function (event) {
+              this.scene.start("sceneC");
+            },
+            this
+          );
+        }
 
-    constructor ()
-    {
-        super({ key: 'sceneB' });
-    }
+        // update ()
+        // {
+        //     this.arrow.rotation += 0.01;
+        // }
+      }
 
-    preload ()
-    {
-        this.load.image('Scene1', 'assets/Scene1.png');
-    }
+      class SceneC extends Phaser.Scene {
+        constructor() {
+          super({ key: "sceneC" });
+        }
 
-    create ()
-    {
-        this.scenea = this.add.image(550, 375, 'Scene1');
+        preload() {
+          this.load.image("Scene2", "assets/Scene2.png");
+        }
 
-        this.input.once('pointerdown', function (event) {
+        create() {
+          this.scenec = this.add.image(550, 400, "Scene2");
+          this.input.once(
+            "pointerdown",
+            function (event) {
+              this.scene.start("main");
+            },
+            this
+          );
+        }
+      }
+      class MainScene extends Phaser.Scene {
+        // var cursors;
+        constructor() {
+          super({ key: "main" });
+        }
 
-            this.scene.start('sceneC');
+        preload() {
+          this.load.image("Background", "assets/background.png");
+          this.load.image("ground", "assets/platform.png");
+          this.load.image("bomb", "assets/ufo.png");
+          this.load.image("food", "assets/food.png");
+          this.load.spritesheet("player", "assets/player.png", {
+            frameWidth: 125,
+            frameHeight: 125,
+          });
+        }
 
-        }, this);
-    }
+        create() {
+          this.background = this.add.image(550, 375, "Background");
+          var platforms = this.physics.add.staticGroup();
+          platforms.create(800, 650, "ground");
+          platforms.create(250, 420, "ground");
+          platforms.create(800, 200, "ground");
 
-    // update ()
-    // {
-    //     this.arrow.rotation += 0.01;
-    // }
+          player = this.physics.add.sprite(100, 450, "player");
+          player.setBounce(0.2);
+          player.setCollideWorldBounds(true);
+          scoreText = this.add.text(16, 16, "score: 0", {
+            fontSize: "32px",
+            fill: "#FF0099",
+          });
 
-}
+          this.anims.create({
+            key: "left",
+            frames: this.anims.generateFrameNumbers("player", {
+              start: 0,
+              end: 13,
+            }),
+            frameRate: 10,
+            repeat: -1,
+          });
 
-class SceneC extends Phaser.Scene {
+          this.anims.create({
+            key: "turn",
+            frames: [{ key: "player", frame: 15 }],
+            frameRate: 10,
+          });
 
-    constructor ()
-    {
-        super({ key: 'sceneC' });
-    }
+          this.anims.create({
+            key: "right",
+            frames: this.anims.generateFrameNumbers("player", {
+              start: 16,
+              end: 29,
+            }),
+            frameRate: 10,
+            repeat: -1,
+          });
+          this.anims.create({
+            key: "jump",
+            frames: this.anims.generateFrameNumbers("player", {
+              start: 17,
+              end: 19,
+            }),
+            frameRate: 1,
+            repeat: -1,
+          });
+          //  this.anims.create({
+          //    key: 'attack',
+          //    frames: [ { key: 'player', frame: 29 } ],
+          //    frameRate: 10,
+          //    repeat: 1
+          // });
 
-    preload ()
-    {
-        this.load.image('Scene2', 'assets/Scene2.png');
-    }
+          //  Input Events
 
-    create ()
-    {
-        this.scenec = this.add.image(550, 400, 'Scene2');
-        this.input.once('pointerdown', function (event) {
+          cursors = this.input.keyboard.createCursorKeys();
+          foods = this.physics.add.group({
+            key: "food",
+            repeat: 11,
+            setXY: { x: 12, y: 0, stepX: 70 },
+          });
 
-            this.scene.start('Start');
+          foods.children.iterate(function (child) {
+            //  Give each star a slightly different bounce
+            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+          });
 
-        }, this);
-    }
+          bombs = this.physics.add.group();
+          this.physics.add.collider(player, platforms);
+          this.physics.add.collider(foods, platforms);
+          this.physics.add.collider(bombs, platforms);
 
-}
+          this.physics.add.overlap(player, foods, this.collectFood, null, this);
+          this.physics.add.collider(player, bombs, this.hitBomb, null, this);
+        }
 
-var config = {
-    type: Phaser.AUTO,
-    width: 1080,
-    height: 720,
-    backgroundColor: '#000000',
-    parent: 'phaser-example',
-    scene: [ SceneA, SceneB, SceneC ]
-};
+        update() {
+          if (gameOver) {
+            gameOvertext = this.add.text(350, 300, "Game Over", {
+            fontSize: "70px",
+            fill: "#00FF00",
+          });
 
-var game = new Phaser.Game(config);
+            return;
+          }
+          // var cursors = this.input.keyboard.createCursorKeys();
+          if (cursors.left.isDown) {
+            // if the left arrow key is down
+            player.body.setVelocityX(-160); // move left
+            player.anims.play("left", true);
+          } else if (cursors.right.isDown) {
+            // if the right arrow key is down
+            player.body.setVelocityX(160); // move right
+            player.anims.play("right", true);
+          } else {
+            player.setVelocityX(0);
+            player.anims.play("turn");
+          }
 
-		</script>
-	</body>
+          if (cursors.up.isDown && player.body.onFloor()) {
+            player.body.setVelocityY(-500); // jump up
+            player.anims.play("jump", true);
+          }
+          // 	if(cursors.space.isDown){
+          // 		player.body.setVelocityY(0);
+          // 		player.anims.play('attack',true)
+
+          // }
+        }
+        collectFood(player, food) {
+          food.disableBody(true, true);
+
+          //  Add and update the score
+          score += 10;
+          scoreText.setText("Score: " + score);
+
+          if (foods.countActive(true) === 0) {
+            //  A new batch of stars to collect
+            foods.children.iterate(function (child) {
+              child.enableBody(true, child.x, 0, true, true);
+            });
+
+            var x =
+              player.x < 400
+                ? Phaser.Math.Between(400, 800)
+                : Phaser.Math.Between(0, 400);
+
+            var bomb = bombs.create(x, 16, "bomb");
+            bomb.setBounce(1);
+            bomb.setCollideWorldBounds(true);
+            bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            bomb.allowGravity = false;
+          }
+        }
+
+        hitBomb(player, bomb) {
+          this.physics.pause();
+
+          player.setTint(0xff0000);
+
+          // player.anims.play("turn");
+
+          gameOver = true;
+        }
+      }
+
+      var config = {
+        type: Phaser.AUTO,
+        physics: {
+          default: "arcade",
+          arcade: {
+            gravity: { y: 500 },
+          },
+        },
+        width: 1080,
+        height: 720,
+        parent: "phaser-example",
+        scene: [SceneA, SceneB, SceneC, MainScene],
+      };
+
+      var game = new Phaser.Game(config);
+      var player;
+      var scoreText;
+      var gameOvertext;
+
+      var cursors;
+      var foods;
+      var bombs;
+      var score = 0;
+      var gameOver = false;
+    </script>
+  </body>
 </html>
