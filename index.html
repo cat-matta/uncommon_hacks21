@@ -22,6 +22,10 @@
 
         create() {
           this.start = this.add.image(550, 400, "start");
+          text = this.add.text(350, 300, "Click to proceed", {
+            fontSize: "32px",
+            fill: "#00FF00",
+          });
 
           this.input.manager.enabled = true;
 
@@ -73,6 +77,10 @@
 
         create() {
           this.scenec = this.add.image(550, 400, "Scene2");
+          text = this.add.text(350, 300, "Use LEFT UP RIGHT to move", {
+            fontSize: "32px",
+            fill: "#00FF00",
+          });
           this.input.once(
             "pointerdown",
             function (event) {
@@ -268,6 +276,7 @@
       var gameOvertext;
 
       var cursors;
+      var text;
       var foods;
       var bombs;
       var score = 0;
